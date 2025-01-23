@@ -43,9 +43,7 @@ const LoginComponent = () => {
   return (
     <div className="flex justify-center items-center w-[400px]">
       <div className="w-full max-w-md p-6 bg-gray-50 border border-[#A64D79] rounded-3xl shadow-lg">
-        <h1 className="text-center text-2xl text-gray-800 mb-6">
-          Iniciar Sesion
-        </h1>
+        <h1 className="text-center text-2xl text-gray-800 mb-6">Login</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
@@ -56,7 +54,7 @@ const LoginComponent = () => {
             </label>
             <input
               type="email"
-              placeholder="Introduce your email"
+              placeholder="Enter your email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -77,7 +75,7 @@ const LoginComponent = () => {
             </label>
             <input
               type="password"
-              placeholder="Create your password"
+              placeholder="Enter your password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -98,9 +96,9 @@ const LoginComponent = () => {
           </button>
         </form>
         <p className="text-center mt-4">
-          Aun no tienes cuenta?{" "}
+          Don't have an account?{" "}
           <Link to="/register" className="text-[#A64D79] font-semibold">
-            Registrate
+            Register
           </Link>
         </p>
       </div>

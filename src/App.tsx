@@ -11,7 +11,7 @@ function App() {
   const { user } = useItemContext();
   console.log(user);
   return (
-    <section>
+    <section className="h-screen w-screen flex flex-col md:flex-row items-center justify-center">
       <Toaster />
       <BrowserRouter>
         <Routes>

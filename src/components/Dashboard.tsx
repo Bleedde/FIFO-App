@@ -4,7 +4,7 @@ import { ItemsPreview } from "./fifo/ItemsPreview";
 
 const Dashboard = () => {
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-10 py-8">
+    <section className="flex flex-col md:flex-row items-center justify-center p-8 h-full gap-6">
       <AddItemForm />
       <ItemsPreview />
       <ButtonsActions />

@@ -1,6 +1,7 @@
 import { FirebaseError } from "firebase/app";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { register } from "../auth";
 import {
   handleFirebaseErrorRegister,
@@ -16,6 +17,7 @@ const RegisterComponent = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -26,6 +28,8 @@ const RegisterComponent = () => {
     if (isEmailValid && isPasswordValid) {
       try {
         await register(email, password);
+        toast.success("Successfully registered user");
+        navigate("/");
       } catch (err: unknown) {
         console.error(err);
         const errorMessage = handleFirebaseErrorRegister(err as FirebaseError);
@@ -37,7 +41,7 @@ const RegisterComponent = () => {
   return (
     <div className="flex justify-center items-center w-[400px]">
       <div className="w-full max-w-md p-6 bg-gray-50 border border-[#A64D79] rounded-3xl shadow-lg">
-        <h1 className="text-center text-2xl text-gray-800 mb-6">Registrar</h1>
+        <h1 className="text-center text-2xl text-gray-800 mb-6">Register</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
@@ -98,9 +102,9 @@ const RegisterComponent = () => {
           </button>
         </form>
         <p className="text-center mt-4">
-          Ya tienes una cuenta?{" "}
+          Already have an account?{" "}
           <Link to="/" className="text-[#A64D79] font-semibold">
-            Iniciar sesión
+            Login
           </Link>
         </p>
       </div>
