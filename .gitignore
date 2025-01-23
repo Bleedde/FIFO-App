@@ -23,8 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Firebase config
-firebaseConfig.ts
+# # Firebase config
+# firebaseConfig.ts
 
 # Environment variables
 .env
