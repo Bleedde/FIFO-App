@@ -5,11 +5,8 @@ import Dashboard from "./components/Dashboard";
 import LoginComponent from "./components/LoginComponent";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import RegisterComponent from "./components/RegisterComponent";
-import { useItemContext } from "./context/useItemContext";
 
 function App() {
-  const { user } = useItemContext();
-  console.log(user);
   return (
     <section className="h-screen w-screen flex flex-col md:flex-row items-center justify-center bg-[#FBF5E5]">
       <Toaster />

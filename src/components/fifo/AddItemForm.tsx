@@ -1,15 +1,33 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { addData } from "../../auth";
 import { useItemContext } from "../../context/useItemContext";
-import { addItem } from "../../utils/items";
 
 export const AddItemForm = () => {
   const { items, setItems } = useItemContext();
-  const [newItem, setNewItem] = useState("");
+  const [newItemValue, setNewItemValue] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setNewItem("");
+
+    if (items?.some((item) => item.value === newItemValue)) {
+      toast.error("Item already exists, try another one");
+      return;
+    }
+
+    try {
+      const addedItem = await addData({ value: newItemValue });
+      if (addedItem) {
+        setItems([...(items || []), addedItem]);
+        setNewItemValue("");
+        toast.success("Item added successfully");
+      } else {
+        toast.error("Failed to add the item, try again");
+      }
+    } catch (error) {
+      console.error("Error adding item: ", error);
+      toast.error("Something went wrong, please try again");
+    }
   };
 
   return (
@@ -22,25 +40,16 @@ export const AddItemForm = () => {
           <input
             type="text"
             placeholder="Item name"
-            value={newItem}
+            value={newItemValue}
             onChange={(e) => {
-              setNewItem(e.target.value);
+              setNewItemValue(e.target.value);
             }}
             className="w-full p-2 mt-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:border-[#A64D79] focus:ring-1 focus:ring-[#3B1C32]"
           />
         </label>
         <button
-          onClick={() => {
-            if (!items.includes(newItem)) {
-              const newItems = addItem(items, newItem);
-              setItems(newItems);
-              setNewItem("");
-              toast.success("Item added successfully");
-            } else {
-              toast.error("Item already exists, try another one");
-            }
-          }}
-          disabled={newItem === ""}
+          type="submit"
+          disabled={newItemValue === ""}
           className="w-full bg-[#A64D79]  text-white p-2 rounded-md hover:bg-[#6A1E55] disabled:bg-[#C890A7] transition text-lg font-semibold"
         >
           Add

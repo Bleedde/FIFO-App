@@ -8,41 +8,48 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { auth } from "./firebaseConfig"; // Asegúrate de configurar correctamente `auth`
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "./firebaseConfig";
+
+export interface Item {
+  id: string;
+  userId: string;
+  value: string;
+}
 
 /**
- * Registra un nuevo usuario con correo electrónico y contraseña.
- * @param email Correo del usuario.
- * @param password Contraseña del usuario.
- * @returns Promesa que resuelve el objeto UserCredential.
+ * Registers a new user with email and password.
+ * @param email User's email.
+ * @param password User's password.
+ * @returns Promise that resolves to UserCredential object.
  */
 export const register = async (email: string, password: string) => {
   return await createUserWithEmailAndPassword(auth, email, password);
 };
 
 /**
- * Inicia sesión con correo electrónico y contraseña.
- * @param email Correo del usuario.
- * @param password Contraseña del usuario.
- * @returns Promesa que resuelve el objeto UserCredential.
+ * Signs in with email and password.
+ * @param email User's email.
+ * @param password User's password.
+ * @returns Promise that resolves to UserCredential object.
  */
 export const login = async (email: string, password: string) => {
   return await signInWithEmailAndPassword(auth, email, password);
 };
 
 /**
- * Envía un correo electrónico para restablecer la contraseña.
- * @param email Correo del usuario.
- * @returns Promesa que resuelve cuando el correo es enviado.
+ * Sends a password reset email.
+ * @param email User's email.
+ * @returns Promise that resolves when email is sent.
  */
 export const resetPassword = async (email: string) => {
   return await sendPasswordResetEmail(auth, email);
 };
 
 /**
- * Envía un correo electrónico para verificar la dirección de email.
- * @returns Promesa que resuelve cuando el correo es enviado.
- * @throws Error si no hay un usuario actualmente autenticado.
+ * Sends an email verification link.
+ * @returns Promise that resolves when email is sent.
+ * @throws Error if no user is currently authenticated.
  */
 export const verifyEmail = async () => {
   if (auth.currentUser) {
@@ -52,8 +59,8 @@ export const verifyEmail = async () => {
 };
 
 /**
- * Cierra la sesión del usuario actual.
- * @returns Promesa que resuelve cuando se ha cerrado la sesión.
+ * Signs out the current user.
+ * @returns Promise that resolves when sign out is complete.
  */
 export const logout = async () => {
   return await signOut(auth);
@@ -61,4 +68,40 @@ export const logout = async () => {
 
 export const AuthStateChanged = (callback: NextOrObserver<User>) => {
   return onAuthStateChanged(auth, callback);
+};
+
+export const addData = async (data: { value: string }) => {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      const docRef = await addDoc(collection(db, "items"), {
+        ...data,
+        userId: user.uid,
+      });
+      return {
+        id: docRef.id,
+        userId: user.uid,
+        value: data.value,
+      };
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  }
+};
+
+export const getData = async (): Promise<Item[] | undefined> => {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      const q = query(collection(db, "items"), where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
+      const userData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Item[];
+      return userData;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+    }
+  }
 };
